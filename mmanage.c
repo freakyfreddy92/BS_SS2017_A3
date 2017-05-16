@@ -24,6 +24,8 @@
 #include "logger.h"
 #include "vmem.h"
 
+#include <limits.h>
+
 /*
  * Signatures of private / static functions
  */
@@ -302,6 +304,39 @@ void sighandler(int signo) {
 /* Your code goes here... */
 
 void vmem_init(void) {
+	if(sem_unlink(NAMED_SEM) ==  -1){}
+	void* shmdate = NULL;
+	key_t key = ftok(SHMKEY, SHMPROCID);
+	//Fehlerbehandlung
+	
+	int shmid = shmget(key, SHMSIZE, IPC_CREAT|SHM_R|SHM_W);
+	//Fehlerbehandlung
+	
+	shmdate = shmat(shmid,NULL,0);
+	//Fehlerbehandlung
+	
+	vmem = (struct vmem_struct*) shmdata;
+	//todo Captcha exeption
+	vmem->adm.size = VMEM_VIRTMEMSIZE;
+	vmem->adm.shm_id = shmid;
+	vmem->adm.next_alloc_idx = 0;
+	vmem->adm.req_pageno = 0;
+	vmem->adm.mmanage_pid = getpid();
+	int i = 0;
+	for(i=0; i<VMEM_NPAGES;i++){
+		
+		vmem->pt.entries[i].age = 0x80;
+		vmem->pt.entries[i].count = 0;
+		vmem->pt.entries[i].flags = 0;
+		vmem->pt.entries[i].frame = VOID_IDX;
+	}
+	
+	for(i=0; i< VMEM_NFRAMES;i++){
+		vmem->pt.framepage[i] = VOID_IDX;
+	}
+	
+	local_sem = sem_open(NAMED_SEM,0_CREAT,0777,0);
+	//Fehlerbehandlung
 }
 
 int find_free_frame() {
