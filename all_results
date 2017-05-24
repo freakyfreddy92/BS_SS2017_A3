@@ -1,0 +1,2 @@
+seed =   2806 page_rep_algo =    FIFO search_algo =    quicksort pagesize =    8 pagefaults         
+seed =    225 page_rep_algo =    FIFO search_algo =    quicksort pagesize =    8 pagefaults         

@@ -1,0 +1,6 @@
+logger.o: logger.c logger.h debug.h
+mmanage.o: mmanage.c mmanage.h debug.h pagefile.h logger.h vmem.h \
+ mytypes.h
+pagefile.o: pagefile.c debug.h vmem.h mytypes.h pagefile.h
+vmaccess.o: vmaccess.c vmem.h mytypes.h debug.h
+vmappl.o: vmappl.c vmaccess.h vmappl.h mytypes.h
